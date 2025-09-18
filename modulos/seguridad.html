@@ -136,15 +136,18 @@
     <!-- Descripción -->
     <section>
       <h2>Descripción</h2>
-      <p>El módulo de Seguridad permite administrar la vigilancia del hotel mediante el monitoreo de cámaras, registro de incidentes, control de accesos y generación de reportes de seguridad. Facilita la protección de los huéspedes y personal.</p>
+      <p>El Módulo de Seguridad administra la vigilancia en el Hotel París. Controla accesos de empleados,
+         visitantes y proveedores, además de registrar incidentes ocurridos en las distintas áreas del hotel,
+         clasificándolos por nivel de gravedad y estado de resolución.</p>
     </section>
 
     <!-- Usuarios -->
     <section class="usuarios">
       <h2>Usuarios que utilizarán este módulo</h2>
       <ul>
-        <li>Administrador de Seguridad</li>
-        <li>Guardia a cargo</li>
+        <li><strong>Guardias de Seguridad:</strong> Registro de accesos y reportes de incidentes.</li>
+        <li><strong>Jefe de Seguridad:</strong> Supervisión de áreas, análisis de incidentes y asignación de guardias.</li>
+        <li><strong>Administrador del Hotel:</strong> Consulta de reportes de seguridad e historial de accesos.</li>
       </ul>
     </section>
 
@@ -160,26 +163,32 @@
         </thead>
         <tbody>
           <tr>
-            <td>Administrador de Seguridad</td>
+            <td>Guardias de Seguridad</td>
             <td>
-              El Administrador debe ser capaz de:
               <ul>
-                <li>Configurar y monitorear todas las cámaras del hotel.</li>
-                <li>Acceder a grabaciones históricas y generar reportes de incidentes.</li>
-                <li>Gestionar usuarios del sistema de seguridad (agregar guardias, asignar roles).</li>
-                <li>Definir zonas críticas y establecer alertas automáticas.</li>
+                <li>Registrar accesos de personas (empleados, visitantes, proveedores).</li>
+                <li>Reportar incidentes en áreas específicas.</li>
+                <li>Actualizar estado de incidentes (ejemplo: de “Abierto” a “En Revisión”).</li>
               </ul>
             </td>
           </tr>
           <tr>
-            <td>Guardia a cargo</td>
+            <td>Jefe de Seguridad</td>
             <td>
-              El Guardia debe ser capaz de:
               <ul>
-                <li>Monitorear cámaras en tiempo real según su turno.</li>
-                <li>Reportar incidentes con fecha, hora y descripción.</li>
-                <li>Consultar historial de grabaciones y eventos en las áreas asignadas.</li>
-                <li>Recibir alertas automáticas de seguridad y responder según protocolo.</li>
+                <li>Consultar historial de accesos por área.</li>
+                <li>Monitorear incidentes y clasificar nivel de gravedad.</li>
+                <li>Generar reportes de seguridad.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr>
+            <td>Administrador del Hotel</td>
+            <td>
+              <ul>
+                <li>Acceder a estadísticas de seguridad.</li>
+                <li>Revisar tendencias de incidentes y accesos.</li>
+                <li>Coordinar con recursos humanos para sanciones o ajustes.</li>
               </ul>
             </td>
           </tr>

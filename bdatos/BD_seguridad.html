@@ -106,82 +106,89 @@
     <!-- Diagrama -->
     <section>
       <h2>Diagrama de la Base de Datos</h2>
-      <p>El diagrama muestra las tablas principales: Empleados, Roles, Cámaras, Grabaciones e Incidentes.</p>
       <div class="bd">
-        <img src="bd-seguridad.png" alt="Diagrama BD del módulo Seguridad">
+        <img src="../imagenes/Seguridad_digr.png" alt="Diagrama BD del módulo Seguridad">
       </div>
     </section>
 
     <!-- Pertinencia -->
     <section>
-      <h2>Descripción de Pertinencia de la Arquitectura</h2>
+      <h2>Pertinencia de la Arquitectura de la Base de Datos</h2>
       <ul>
-        <li>La arquitectura relacional permite relacionar empleados y roles con las cámaras y grabaciones.</li>
-        <li>Facilita consultas de incidentes, historial de grabaciones y reportes de seguridad.</li>
-        <li>Evita redundancia y mantiene la integridad de la información.</li>
+        <li>La arquitectura relacional permite integrar seguridad con otros módulos (ejemplo: estacionamiento o personal).</li>
+        <li>Asegura integridad referencial entre áreas, accesos e incidentes.</li>
+        <li>Permite generar reportes históricos y en tiempo real de accesos e incidentes.</li>
+        <li>Escalable: se pueden agregar nuevas áreas y tipos de incidentes fácilmente.</li>
       </ul>
     </section>
 
     <!-- Normalización -->
     <section>
-      <h2>Normalización (1NF, 2NF, 3NF)</h2>
+      <h2>Normalización de la Base de Datos</h2>
       <ul>
-        <li><strong>1NF:</strong> Todos los campos son atómicos y cada registro es único.</li>
-        <li><strong>2NF:</strong> Cada atributo depende completamente de la clave primaria.</li>
-        <li><strong>3NF:</strong> No existen dependencias transitivas. Ej: tipo de cámara depende de la cámara, no del usuario.</li>
-      </ul>
+       <li><strong>1FN:</strong> Los datos son atómicos (ejemplo: persona, nivel_gravedad).</li>
+        <li><strong>2FN:</strong> Cada tabla tiene clave primaria única (id_area, id_incidente, id_acceso).</li>
+        <li><strong>3FN:</strong> No existen dependencias transitivas; cada dato depende únicamente de la clave primaria.</li>
+    </ol>
     </section>
 
     <!-- Código SQL -->
     <section>
       <h2>Código SQL</h2>
       <pre>
--- Tabla Cámaras
-CREATE TABLE Camaras (
-    idCamara INT PRIMARY KEY AUTO_INCREMENT,
-    ubicacion VARCHAR(100) NOT NULL,
-    tipo VARCHAR(50),
-    estado VARCHAR(20),
-    fechaInstalacion DATE
+-- Tabla de Áreas del hotel
+CREATE TABLE Area (
+    id_area INT PRIMARY KEY IDENTITY(1,1),
+    nombre_area VARCHAR(100) NOT NULL,
+    descripcion VARCHAR(200)
 );
 
--- Tabla Grabaciones
-CREATE TABLE Grabaciones (
-    idGrabacion INT PRIMARY KEY AUTO_INCREMENT,
-    idCamara INT,
-    fechaHoraInicio DATETIME,
-    fechaHoraFin DATETIME,
-    rutaArchivo VARCHAR(200),
-    FOREIGN KEY (idCamara) REFERENCES Camaras(idCamara)
+-- Tabla de Incidentes
+CREATE TABLE Incidente (
+    id_incidente INT PRIMARY KEY IDENTITY(1,1),
+    id_area INT NOT NULL,
+    descripcion VARCHAR(300) NOT NULL,
+    fecha_incidente DATETIME NOT NULL DEFAULT GETDATE(),
+    nivel_gravedad VARCHAR(20) NOT NULL CHECK (nivel_gravedad IN ('Leve','Moderado','Grave')),
+    estado VARCHAR(20) NOT NULL CHECK (estado IN ('Abierto','En Revisión','Cerrado')),
+    FOREIGN KEY (id_area) REFERENCES Area(id_area)
 );
 
--- Tabla Incidentes
-CREATE TABLE Incidentes (
-    idIncidente INT PRIMARY KEY AUTO_INCREMENT,
-    idEmpleado INT,
-    idCamara INT,
-    fechaHora DATETIME,
-    descripcion TEXT,
-    tipo VARCHAR(50),
-    FOREIGN KEY (idEmpleado) REFERENCES Empleados(idEmpleado),
-    FOREIGN KEY (idCamara) REFERENCES Camaras(idCamara)
+-- Tabla de Accesos (entrada y salida de personal/visitantes)
+CREATE TABLE Acceso (
+    id_acceso INT PRIMARY KEY IDENTITY(1,1),
+    persona VARCHAR(100) NOT NULL,
+    tipo_persona VARCHAR(20) NOT NULL CHECK (tipo_persona IN ('Empleado','Visitante','Proveedor')),
+    id_area INT NOT NULL,
+    fecha_ingreso DATETIME NOT NULL DEFAULT GETDATE(),
+    fecha_salida DATETIME NULL,
+    FOREIGN KEY (id_area) REFERENCES Area(id_area)
 );
+
       </pre>
 
       <p>Insertando registros de ejemplo:</p>
       <pre>
--- Insertar Cámaras
-INSERT INTO Camaras(ubicacion, tipo, estado, fechaInstalacion)
-VALUES ('Entrada principal', 'IP', 'Activa', '2025-01-10'),
-       ('Lobby', 'IP', 'Activa', '2025-01-12');
+-- Áreas vigiladas
+INSERT INTO Area (nombre_area, descripcion) VALUES
+('Recepción', 'Entrada principal del hotel'),
+('Estacionamiento', 'Área de vehículos de huéspedes y empleados'),
+('Restaurante', 'Área de consumo de alimentos'),
+('Habitaciones Piso 1', 'Primer nivel de habitaciones');
 
--- Insertar Grabaciones
-INSERT INTO Grabaciones(idCamara, fechaHoraInicio, fechaHoraFin, rutaArchivo)
-VALUES (1, '2025-09-18 08:00:00', '2025-09-18 10:00:00', 'grabaciones/camara1_0800_1000.mp4');
+-- Incidentes registrados
+INSERT INTO Incidente (id_area, descripcion, nivel_gravedad, estado) VALUES
+(1, 'Cliente perdió una pertenencia en la recepción', 'Leve', 'Cerrado'),
+(2, 'Auto estacionado en lugar no autorizado', 'Moderado', 'En Revisión'),
+(4, 'Intento de acceso no autorizado a una habitación', 'Grave', 'Abierto');
 
--- Insertar Incidentes
-INSERT INTO Incidentes(idEmpleado, idCamara, fechaHora, descripcion, tipo)
-VALUES (2, 1, '2025-09-18 08:45:00', 'Acceso no autorizado detectado', 'Alerta de seguridad');
+-- Accesos
+INSERT INTO Acceso (persona, tipo_persona, id_area, fecha_ingreso, fecha_salida) VALUES
+('María López', 'Empleado', 1, '2025-09-18 08:00:00', '2025-09-18 16:00:00'),
+('Carlos García', 'Empleado', 2, '2025-09-18 14:00:00', NULL),
+('Proveedor Agua Pura', 'Proveedor', 1, '2025-09-18 10:30:00', '2025-09-18 11:15:00'),
+('Jorge Ramírez', 'Empleado', 4, '2025-09-18 18:00:00', NULL);
+
       </pre>
     </section>
 
