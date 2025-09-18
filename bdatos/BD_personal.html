@@ -114,30 +114,30 @@
       <h2>Diagrama de la Base de Datos</h2>
       <p>El diagrama muestra las tablas principales necesarias para gestionar el personal del hotel: Empleados, Roles, Asistencia y Horarios.</p>
       <div class="bd">
-        <img src="bd-personal.png" alt="Diagrama de la base de datos del módulo Personal">
+        <img src="../imagenes/Personal_digr.png" alt="Diagrama de la base de datos del módulo Personal">
       </div>
     </section>
 
     <!-- Pertinencia de la arquitectura -->
     <section class="section-content">
       <h2>Descripción de Pertinencia de la Arquitectura de la Base de Datos</h2>
-      <p>Se eligió una arquitectura relacional porque permite:</p>
+      <p>La arquitectura de la base de datos está basada en el modelo relacional, lo cual permite</p>
       <ul>
-        <li>Organizar la información de los empleados de manera estructurada.</li>
-        <li>Establecer relaciones entre tablas, como Empleados ↔ Roles y Empleados ↔ Asistencia.</li>
-        <li>Facilitar consultas, reportes y mantenimiento de los datos.</li>
-        <li>Evitar redundancia y asegurar integridad de la información.</li>
+        <li>Integridad referencial entre módulos (ejemplo: personal vinculado a reservas, seguridad).</li>
+        <li>Escalabilidad para integrar nuevos cargos, usuarios y funcionalidades.</li>
+        <li>Seguridad de datos mediante roles y privilegios de acceso.</li>
+        <li>Optimización en consultas de nómina, reportes y gestión de personal.</li>
       </ul>
     </section>
 
     <!-- Normalización -->
     <section class="section-content">
       <h2>Normalización de la Base de Datos</h2>
-      <p>Se aplicaron las primeras tres formas normales para garantizar integridad y eficiencia:</p>
+      <p>La tabla de Personal cumple hasta la 3FN (Tercera Forma Normal):</p>
       <ul>
-        <li><strong>1NF:</strong> Todos los campos contienen valores atómicos, no repetitivos y cada registro es único. Ej: La tabla Empleados tiene un campo “Nombre” indivisible.</li>
-        <li><strong>2NF:</strong> Todos los atributos dependen completamente de la clave primaria. Ej: Los datos de Roles no dependen parcialmente de la clave del empleado.</li>
-        <li><strong>3NF:</strong> No hay dependencia transitiva. Ej: Los salarios dependen del rol del empleado y no de otros datos no clave.</li>
+        <li><strong>1NF:</strong> Todos los atributos son atómicos (ejemplo: nombre, apellido, cargo).</li>
+        <li><strong>2NF:</strong> La tabla tiene clave primaria simple (id_personal), no hay dependencias parciales.</li>
+        <li><strong>3NF:</strong> No existen dependencias transitivas (ejemplo: salario depende solo de la persona, no de otro atributo).</li>
       </ul>
     </section>
 
@@ -146,68 +146,51 @@
       <h2>Código SQL</h2>
       <p>Creación de las tablas principales:</p>
       <pre>
--- Tabla Roles
-CREATE TABLE Roles (
-    idRol INT PRIMARY KEY AUTO_INCREMENT,
-    nombreRol VARCHAR(50) NOT NULL,
-    descripcionRol VARCHAR(200)
+-- Tabla de roles
+CREATE TABLE Rol (
+    id_rol INT PRIMARY KEY IDENTITY(1,1),
+    nombre_rol VARCHAR(50) UNIQUE NOT NULL,
+    descripcion VARCHAR(200)
 );
 
--- Tabla Empleados
-CREATE TABLE Empleados (
-    idEmpleado INT PRIMARY KEY AUTO_INCREMENT,
+-- Tabla de personal
+CREATE TABLE Personal (
+    id_personal INT PRIMARY KEY IDENTITY(1,1),
     nombre VARCHAR(100) NOT NULL,
-    puesto VARCHAR(50),
-    salario DECIMAL(10,2),
-    idRol INT,
-    correo VARCHAR(100),
+    apellido VARCHAR(100) NOT NULL,
+    dni VARCHAR(20) UNIQUE NOT NULL,
     telefono VARCHAR(20),
-    fechaIngreso DATE,
-    FOREIGN KEY (idRol) REFERENCES Roles(idRol)
+    correo VARCHAR(100) UNIQUE,
+    direccion VARCHAR(200),
+    id_rol INT NOT NULL,
+    fecha_contratacion DATE NOT NULL,
+    salario DECIMAL(10,2) NOT NULL,
+    turno VARCHAR(20) NOT NULL CHECK (turno IN ('Mañana','Tarde','Noche')),
+    estado VARCHAR(20) DEFAULT 'Activo' CHECK (estado IN ('Activo','Inactivo')),
+    FOREIGN KEY (id_rol) REFERENCES Rol(id_rol)
 );
 
--- Tabla Asistencia
-CREATE TABLE Asistencia (
-    idAsistencia INT PRIMARY KEY AUTO_INCREMENT,
-    idEmpleado INT,
-    fecha DATE NOT NULL,
-    horaEntrada TIME,
-    horaSalida TIME,
-    FOREIGN KEY (idEmpleado) REFERENCES Empleados(idEmpleado)
-);
-
--- Tabla Horarios
-CREATE TABLE Horarios (
-    idHorario INT PRIMARY KEY AUTO_INCREMENT,
-    idEmpleado INT,
-    diaSemana VARCHAR(15),
-    horaInicio TIME,
-    horaFin TIME,
-    FOREIGN KEY (idEmpleado) REFERENCES Empleados(idEmpleado)
-);
       </pre>
 
       <p>Insertando registros de ejemplo:</p>
       <pre>
 -- Insertar Roles
-INSERT INTO Roles(nombreRol, descripcionRol)
-VALUES ('Administrador', 'Encargado de la gestión completa del personal'),
-       ('Empleado a cargo', 'Supervisa asistencia y datos de su equipo');
+INSERT INTO Rol (nombre_rol, descripcion) VALUES
+('Gerente', 'Encargado de la administración general del hotel'),
+('Recepcionista', 'Atiende a los clientes y gestiona reservaciones'),
+('Camarista', 'Encargado de la limpieza y mantenimiento de habitaciones'),
+('Seguridad', 'Supervisa la seguridad del hotel y los accesos'),
+('Encargado de Nómina', 'Gestiona el pago y control del salario del personal');
 
--- Insertar Empleados
-INSERT INTO Empleados(nombre, puesto, salario, idRol, correo, telefono, fechaIngreso)
-VALUES ('Juan Pérez', 'Gerente General', 25000, 1, 'juan.perez@hotelparis.com', '555-123456', '2025-01-15'),
-       ('María López', 'Supervisor de Piso', 15000, 2, 'maria.lopez@hotelparis.com', '555-654321', '2025-03-10');
 
--- Insertar Asistencia
-INSERT INTO Asistencia(idEmpleado, fecha, horaEntrada, horaSalida)
-VALUES (1, '2025-09-18', '08:00:00', '17:00:00'),
-       (2, '2025-09-18', '09:00:00', '18:00:00');
+-- Insertar Personal
+INSERT INTO Personal (nombre, apellido, dni, telefono, correo, direccion, id_rol, fecha_contratacion, salario, turno, estado)
+VALUES 
+('María', 'López', 'HPM12345', '555-1234', 'maria.lopez@hotelparis.com', 'Calle Luna #123', 2, '2022-03-01', 9500.00, 'Mañana', 'Activo'),
+('Carlos', 'García', 'HPM67890', '555-5678', 'carlos.garcia@hotelparis.com', 'Av. Sol #45', 3, '2021-07-15', 8000.00, 'Tarde', 'Activo'),
+('Ana', 'Martínez', 'HPM54321', '555-9876', 'ana.martinez@hotelparis.com', 'Calle Estrella #88', 1, '2019-01-10', 18000.00, 'Mañana', 'Activo'),
+('Jorge', 'Ramírez', 'HPM11223', '555-4444', 'jorge.ramirez@hotelparis.com', 'Boulevard Central #12', 4, '2023-05-20', 8700.00, 'Noche', 'Activo');
 
--- Insertar Horarios
-INSERT INTO Horarios(idEmpleado, diaSemana, horaInicio, horaFin)
-VALUES (1, 'Lunes', '08:00:00', '17:00:00'),
-       (2, 'Lunes', '09:00:00', '18:00:00');
       </pre>
     </section>
 
