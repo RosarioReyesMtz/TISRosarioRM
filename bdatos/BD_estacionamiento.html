@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Base de Datos - Estacionamiento</title>
+  <style>
+    :root {
+      --blanco: #ffffff;
+      --negro: #000000;
+      --guinda: #450505fe;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--blanco);
+      color: var(--negro);
+    }
+
+    header {
+      background: var(--guinda);
+      color: var(--blanco);
+      padding: 25px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.2rem;
+    }
+
+    header p {
+      font-size: 1.1rem;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 30px;
+    }
+
+    h2 {
+      color: var(--guinda);
+      border-left: 5px solid var(--guinda);
+      padding-left: 10px;
+      margin-top: 40px;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    ul li {
+      background: #f6f6f6;
+      padding: 10px;
+      margin-bottom: 8px;
+      border-left: 5px solid var(--guinda);
+    }
+
+    .bd img {
+      max-width: 90%;
+      border: 3px solid var(--guinda);
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    pre {
+      background: #f6f6f6;
+      border-left: 5px solid var(--guinda);
+      padding: 15px;
+      overflow-x: auto;
+      border-radius: 5px;
+    }
+
+    .buttons {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .buttons button {
+      background: var(--guinda);
+      color: var(--blanco);
+      padding: 12px 20px;
+      border: none;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    .buttons button:hover {
+      background: var(--negro);
+      color: var(--blanco);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Base de Datos - Módulo Estacionamiento</h1>
+    <p>Diseño y creación de la base de datos del sistema de estacionamiento</p>
+  </header>
+
+  <main>
+    <!-- Diagrama -->
+    <section>
+      <h2>Diagrama de la Base de Datos</h2>
+      <p>El diagrama muestra las tablas principales: Espacios, Vehiculos, Reservas y RegistroEntradasSalidas.</p>
+      <div class="bd">
+        <img src="bd-estacionamiento.png" alt="Diagrama BD del módulo Estacionamiento">
+      </div>
+    </section>
+
+    <!-- Pertinencia -->
+    <section>
+      <h2>Descripción de Pertinencia de la Arquitectura</h2>
+      <ul>
+        <li>La arquitectura relacional permite relacionar vehículos con espacios y reservas, así como registrar entradas y salidas de manera precisa.</li>
+        <li>Facilita consultas de disponibilidad y generación de reportes de uso y ocupación.</li>
+        <li>Evita redundancia y mantiene la integridad de la información.</li>
+      </ul>
+    </section>
+
+    <!-- Normalización -->
+    <section>
+      <h2>Normalización (1NF, 2NF, 3NF)</h2>
+      <ul>
+        <li><strong>1NF:</strong> Todos los campos son atómicos y cada registro es único.</li>
+        <li><strong>2NF:</strong> Cada atributo depende completamente de la clave primaria.</li>
+        <li><strong>3NF:</strong> No existen dependencias transitivas. Por ejemplo, la información del vehículo depende de su registro, no de la reserva.</li>
+      </ul>
+    </section>
+
+    <!-- Código SQL -->
+    <section>
+      <h2>Código SQL</h2>
+      <pre>
+-- Tabla Espacios de Estacionamiento
+CREATE TABLE Espacios (
+    idEspacio INT PRIMARY KEY AUTO_INCREMENT,
+    numeroEspacio VARCHAR(10) NOT NULL,
+    estado VARCHAR(20), -- Disponible, Ocupado, Reservado
+    tipo VARCHAR(50) -- Normal, VIP, Discapacitados
+);
+
+-- Tabla Vehículos
+CREATE TABLE Vehiculos (
+    idVehiculo INT PRIMARY KEY AUTO_INCREMENT,
+    placa VARCHAR(20) NOT NULL,
+    marca VARCHAR(50),
+    modelo VARCHAR(50),
+    color VARCHAR(20),
+    idEmpleado INT, -- opcional: empleado asociado
+    FOREIGN KEY (idEmpleado) REFERENCES Empleados(idEmpleado)
+);
+
+-- Tabla Reservas
+CREATE TABLE Reservas (
+    idReserva INT PRIMARY KEY AUTO_INCREMENT,
+    idVehiculo INT,
+    idEspacio INT,
+    fecha DATE NOT NULL,
+    horaInicio TIME,
+    horaFin TIME,
+    FOREIGN KEY (idVehiculo) REFERENCES Vehiculos(idVehiculo),
+    FOREIGN KEY (idEspacio) REFERENCES Espacios(idEspacio)
+);
+
+-- Tabla Registro de Entradas y Salidas
+CREATE TABLE RegistroEntradasSalidas (
+    idRegistro INT PRIMARY KEY AUTO_INCREMENT,
+    idVehiculo INT,
+    idEspacio INT,
+    fecha DATE NOT NULL,
+    horaEntrada TIME,
+    horaSalida TIME,
+    FOREIGN KEY (idVehiculo) REFERENCES Vehiculos(idVehiculo),
+    FOREIGN KEY (idEspacio) REFERENCES Espacios(idEspacio)
+);
+
+-- ==========================================
+-- Inserción de registros de ejemplo
+-- ==========================================
+
+-- Insertar Espacios
+INSERT INTO Espacios(numeroEspacio, estado, tipo)
+VALUES ('E01', 'Disponible', 'Normal'),
+       ('E02', 'Ocupado', 'VIP'),
+       ('E03', 'Disponible', 'Discapacitados');
+
+-- Insertar Vehículos
+INSERT INTO Vehiculos(placa, marca, modelo, color)
+VALUES ('ABC123', 'Toyota', 'Corolla', 'Blanco'),
+       ('XYZ789', 'Honda', 'Civic', 'Negro');
+
+-- Insertar Reservas
+INSERT INTO Reservas(idVehiculo, idEspacio, fecha, horaInicio, horaFin)
+VALUES (1, 1, '2025-09-18', '08:00:00', '12:00:00');
+
+-- Insertar Registro Entradas/Salidas
+INSERT INTO RegistroEntradasSalidas(idVehiculo, idEspacio, fecha, horaEntrada, horaSalida)
+VALUES (2, 2, '2025-09-18', '09:00:00', '11:00:00');
+      </pre>
+    </section>
+
+    <div class="buttons">
+      <button onclick="location.href='../modulos/estacionamiento.html'">Regresar al Módulo Estacionamiento</button>
+      <button onclick="location.href='../index.html'">Regresar a la Interfaz Principal</button>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Base de Datos - Restaurante</title>
+  <style>
+    :root {
+      --blanco: #ffffff;
+      --negro: #000000;
+      --guinda: #450505fe;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--blanco);
+      color: var(--negro);
+    }
+
+    header {
+      background: var(--guinda);
+      color: var(--blanco);
+      padding: 25px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.2rem;
+    }
+
+    header p {
+      font-size: 1.1rem;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 30px;
+    }
+
+    h2 {
+      color: var(--guinda);
+      border-left: 5px solid var(--guinda);
+      padding-left: 10px;
+      margin-top: 40px;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    ul li {
+      background: #f6f6f6;
+      padding: 10px;
+      margin-bottom: 8px;
+      border-left: 5px solid var(--guinda);
+    }
+
+    .bd img {
+      max-width: 90%;
+      border: 3px solid var(--guinda);
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    pre {
+      background: #f6f6f6;
+      border-left: 5px solid var(--guinda);
+      padding: 15px;
+      overflow-x: auto;
+      border-radius: 5px;
+    }
+
+    .buttons {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .buttons button {
+      background: var(--guinda);
+      color: var(--blanco);
+      padding: 12px 20px;
+      border: none;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    .buttons button:hover {
+      background: var(--negro);
+      color: var(--blanco);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Base de Datos - Módulo Restaurante</h1>
+    <p>Diseño y creación de la base de datos del sistema de restaurante</p>
+  </header>
+
+  <main>
+    <!-- Diagrama -->
+    <section class="section-content">
+      <h2>Diagrama de la Base de Datos</h2>
+      <div class="bd">
+      <img src="bd-restaurante.png" alt="Diagrama BD Restaurante" style="max-width:90%;border:3px solid #800000;border-radius:10px;">
+      </div>
+    </section>
+
+    <!-- Pertinencia de la arquitectura -->
+    <section class="section-content">
+      <h2>Descripción de Pertinencia de la Arquitectura</h2>
+      <ul>
+        <li>Permite relacionar mesas, reservas, pedidos y platillos de forma eficiente.</li>
+        <li>Evita redundancia de información y facilita la generación de reportes de ventas.</li>
+        <li>Controla la relación entre meseros, cocineros y clientes.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Normalización (1NF, 2NF, 3NF)</h2>
+      <ul>
+        <li><strong>1NF:</strong> Todos los campos son atómicos y cada registro es único.</li>
+        <li><strong>2NF:</strong> Cada atributo depende completamente de la clave primaria.</li>
+        <li><strong>3NF:</strong> No existen dependencias transitivas; por ejemplo, la información de platillos depende solo del registro de platillo, no del pedido.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Código SQL</h2>
+      <pre>
+-- Tabla Mesas
+CREATE TABLE Mesas (
+    idMesa INT PRIMARY KEY AUTO_INCREMENT,
+    numeroMesa VARCHAR(10) NOT NULL,
+    capacidad INT NOT NULL,
+    estado VARCHAR(20) -- Libre, Ocupada, Reservada
+);
+
+-- Tabla Platillos
+CREATE TABLE Platillos (
+    idPlatillo INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(100) NOT NULL,
+    categoria VARCHAR(50),
+    precio DECIMAL(10,2)
+);
+
+-- Tabla Reservas
+CREATE TABLE ReservasRestaurante (
+    idReserva INT PRIMARY KEY AUTO_INCREMENT,
+    idMesa INT,
+    nombreCliente VARCHAR(100),
+    fecha DATE,
+    hora TIME,
+    FOREIGN KEY (idMesa) REFERENCES Mesas(idMesa)
+);
+
+-- Tabla Pedidos a Habitación
+CREATE TABLE PedidosHabitacion (
+    idPedidoHabitacion INT PRIMARY KEY AUTO_INCREMENT,
+    numeroHabitacion VARCHAR(10) NOT NULL,
+    idMesero INT,
+    fecha DATE,
+    hora TIME,
+    estado VARCHAR(20), -- En preparación, Entregado
+    FOREIGN KEY (idMesero) REFERENCES Empleados(idEmpleado)
+);
+
+-- Tabla Detalle de Pedidos a Habitación
+CREATE TABLE DetallePedidosHabitacion (
+    idDetalle INT PRIMARY KEY AUTO_INCREMENT,
+    idPedidoHabitacion INT,
+    idPlatillo INT,
+    cantidad INT,
+    FOREIGN KEY (idPedidoHabitacion) REFERENCES PedidosHabitacion(idPedidoHabitacion),
+    FOREIGN KEY (idPlatillo) REFERENCES Platillos(idPlatillo)
+);
+
+-- Ejemplo de registros
+INSERT INTO PedidosHabitacion(numeroHabitacion, idMesero, fecha, hora, estado)
+VALUES ('101', 4, '2025-09-18', '13:00:00', 'En preparación');
+
+INSERT INTO DetallePedidosHabitacion(idPedidoHabitacion, idPlatillo, cantidad)
+VALUES (1, 1, 1), (1, 2, 2);
+
+
+-- ==========================================
+-- Ejemplo de registros
+-- ==========================================
+INSERT INTO Mesas(numeroMesa, capacidad, estado) VALUES ('M01', 4, 'Libre'), ('M02', 2, 'Ocupada');
+INSERT INTO Platillos(nombre, categoria, precio) VALUES ('Pizza Margarita', 'Comida', 150.00), ('Ensalada César', 'Comida', 120.00);
+INSERT INTO Pedidos(idMesa, idMesero, fecha, hora, estado) VALUES (2, 4, '2025-09-18', '12:30:00', 'En preparación');
+INSERT INTO DetallePedidos(idPedido, idPlatillo, cantidad) VALUES (1, 1, 2), (1, 2, 1);
+INSERT INTO ReservasRestaurante(idMesa, nombreCliente, fecha, hora) VALUES (1, 'Carlos Díaz', '2025-09-18', '14:00:00');
+      </pre>
+    </section>
+
+
+
+
+    <div class="buttons">
+      <button onclick="location.href='restaurante.html'">Regresar al Módulo Restaurante</button>
+      <button onclick="location.href='../index.html'">Regresar a la Interfaz Principal</button>
+    </div>
+  </main>
+</body>
+</html>

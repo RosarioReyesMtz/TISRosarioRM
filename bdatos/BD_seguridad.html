@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Base de Datos - Seguridad</title>
+  <style>
+    :root {
+      --blanco: #ffffff;
+      --negro: #000000;
+      --guinda: #450505fe;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--blanco);
+      color: var(--negro);
+    }
+
+    header {
+      background: var(--guinda);
+      color: var(--blanco);
+      padding: 25px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.2rem;
+    }
+
+    header p {
+      font-size: 1.1rem;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 30px;
+    }
+
+    h2 {
+      color: var(--guinda);
+      border-left: 5px solid var(--guinda);
+      padding-left: 10px;
+      margin-top: 40px;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    ul li {
+      background: #f6f6f6;
+      padding: 10px;
+      margin-bottom: 8px;
+      border-left: 5px solid var(--guinda);
+    }
+
+    .bd img {
+      max-width: 90%;
+      border: 3px solid var(--guinda);
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    pre {
+      background: #f6f6f6;
+      border-left: 5px solid var(--guinda);
+      padding: 15px;
+      overflow-x: auto;
+      border-radius: 5px;
+    }
+
+    .buttons {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .buttons button {
+      background: var(--guinda);
+      color: var(--blanco);
+      padding: 12px 20px;
+      border: none;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    .buttons button:hover {
+      background: var(--negro);
+      color: var(--blanco);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Base de Datos - Módulo Seguridad</h1>
+    <p>Diseño y creación de la base de datos del sistema de cámaras y vigilancia</p>
+  </header>
+
+  <main>
+    <!-- Diagrama -->
+    <section>
+      <h2>Diagrama de la Base de Datos</h2>
+      <p>El diagrama muestra las tablas principales: Empleados, Roles, Cámaras, Grabaciones e Incidentes.</p>
+      <div class="bd">
+        <img src="bd-seguridad.png" alt="Diagrama BD del módulo Seguridad">
+      </div>
+    </section>
+
+    <!-- Pertinencia -->
+    <section>
+      <h2>Descripción de Pertinencia de la Arquitectura</h2>
+      <ul>
+        <li>La arquitectura relacional permite relacionar empleados y roles con las cámaras y grabaciones.</li>
+        <li>Facilita consultas de incidentes, historial de grabaciones y reportes de seguridad.</li>
+        <li>Evita redundancia y mantiene la integridad de la información.</li>
+      </ul>
+    </section>
+
+    <!-- Normalización -->
+    <section>
+      <h2>Normalización (1NF, 2NF, 3NF)</h2>
+      <ul>
+        <li><strong>1NF:</strong> Todos los campos son atómicos y cada registro es único.</li>
+        <li><strong>2NF:</strong> Cada atributo depende completamente de la clave primaria.</li>
+        <li><strong>3NF:</strong> No existen dependencias transitivas. Ej: tipo de cámara depende de la cámara, no del usuario.</li>
+      </ul>
+    </section>
+
+    <!-- Código SQL -->
+    <section>
+      <h2>Código SQL</h2>
+      <pre>
+-- Tabla Cámaras
+CREATE TABLE Camaras (
+    idCamara INT PRIMARY KEY AUTO_INCREMENT,
+    ubicacion VARCHAR(100) NOT NULL,
+    tipo VARCHAR(50),
+    estado VARCHAR(20),
+    fechaInstalacion DATE
+);
+
+-- Tabla Grabaciones
+CREATE TABLE Grabaciones (
+    idGrabacion INT PRIMARY KEY AUTO_INCREMENT,
+    idCamara INT,
+    fechaHoraInicio DATETIME,
+    fechaHoraFin DATETIME,
+    rutaArchivo VARCHAR(200),
+    FOREIGN KEY (idCamara) REFERENCES Camaras(idCamara)
+);
+
+-- Tabla Incidentes
+CREATE TABLE Incidentes (
+    idIncidente INT PRIMARY KEY AUTO_INCREMENT,
+    idEmpleado INT,
+    idCamara INT,
+    fechaHora DATETIME,
+    descripcion TEXT,
+    tipo VARCHAR(50),
+    FOREIGN KEY (idEmpleado) REFERENCES Empleados(idEmpleado),
+    FOREIGN KEY (idCamara) REFERENCES Camaras(idCamara)
+);
+      </pre>
+
+      <p>Insertando registros de ejemplo:</p>
+      <pre>
+-- Insertar Cámaras
+INSERT INTO Camaras(ubicacion, tipo, estado, fechaInstalacion)
+VALUES ('Entrada principal', 'IP', 'Activa', '2025-01-10'),
+       ('Lobby', 'IP', 'Activa', '2025-01-12');
+
+-- Insertar Grabaciones
+INSERT INTO Grabaciones(idCamara, fechaHoraInicio, fechaHoraFin, rutaArchivo)
+VALUES (1, '2025-09-18 08:00:00', '2025-09-18 10:00:00', 'grabaciones/camara1_0800_1000.mp4');
+
+-- Insertar Incidentes
+INSERT INTO Incidentes(idEmpleado, idCamara, fechaHora, descripcion, tipo)
+VALUES (2, 1, '2025-09-18 08:45:00', 'Acceso no autorizado detectado', 'Alerta de seguridad');
+      </pre>
+    </section>
+
+    <div class="buttons">
+      <button onclick="location.href='../modulos/seguridad.html'">Regresar al Módulo Seguridad</button>
+      <button onclick="location.href='../index.html'">Regresar a la Interfaz Principal</button>
+    </div>
+  </main>
+</body>
+</html>

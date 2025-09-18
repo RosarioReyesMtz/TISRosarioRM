@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Módulo de Personal - Hotel París</title>
+  <title>Módulo de Restaurante - Hotel París</title>
   <style>
     :root {
       --blanco: #ffffff;
       --negro: #000000;
-      --guinda: #450505fe;
+      --guinda: #800000;
     }
 
     body {
@@ -128,23 +128,24 @@
 <body>
 
   <header>
-    <h1>Módulo de Personal</h1>
-    <p>Administración de los recursos humanos del Hotel París</p>
+    <h1>Módulo de Restaurante</h1>
+    <p>Gestión de pedidos, mesas y personal del restaurante del Hotel París</p>
   </header>
 
   <main>
     <!-- Descripción -->
     <section>
       <h2>Descripción</h2>
-      <p>El módulo de Personal permite administrar la información de los empleados del Hotel París: contratación, horarios, roles, salarios y asistencia. Facilita la organización y el control de los recursos humanos.</p>
+      <p>El módulo de Restaurante permite administrar mesas, reservas, pedidos de clientes, menús y personal del restaurante. Facilita la organización y control de la operación diaria y la gestión de reportes de ventas.</p>
     </section>
 
     <!-- Usuarios -->
     <section class="usuarios">
       <h2>Usuarios que utilizarán este módulo</h2>
       <ul>
-        <li>Administrador del hotel</li>
-        <li>Empleado a cargo</li>
+        <li>Administrador del Restaurante</li>
+        <li>Meseros</li>
+        <li>Cocinero / Chef</li>
       </ul>
     </section>
 
@@ -160,29 +161,37 @@
         </thead>
         <tbody>
           <tr>
-            <td>Administrador</td>
+            <td>Administrador del Restaurante</td>
             <td>
-              El Administrador debe ser capaz de:
+              El administrador debe ser capaz de:
               <ul>
-                <li>Registrar nuevos empleados ingresando: Nombre completo, puesto, rol, salario, fecha de inicio y datos de contacto.</li>
-                <li>Modificar información de empleados existentes: Actualizar puesto, rol, salario o datos personales.</li>
-                <li>Dar de baja empleados que ya no laboren en el hotel.</li>
-                <li>Definir roles y permisos para cada empleado según su posición y responsabilidades.</li>
-                <li>Generar reportes completos de los empleados: Asistencia, rendimiento, historial laboral, salarios y contratos.</li>
-                <li>Supervisar y auditar las actividades realizadas por los empleados en el sistema.</li>
+                <li>Gestionar mesas y reservas.</li>
+                <li>Configurar el menú del restaurante (platillos, precios, categorías).</li>
+                <li>Consultar reportes de ventas, pedidos y ocupación de mesas.</li>
+                <li>Asignar roles al personal del restaurante.</li>
               </ul>
             </td>
           </tr>
+            <tr>
+                <td>Meseros</td>
+                <td>
+                El mesero debe ser capaz de:
+                <ul>
+                     <li>Registrar pedidos de los clientes en el restaurante.</li>
+                     <li>Registrar pedidos a habitación indicando número de habitación, platillos y cantidad.</li>
+                     <li>Actualizar el estado de los pedidos (En preparación, Servido / Entregado).</li>
+                     <li>Asignar mesas a los clientes y consultar disponibilidad.</li>
+                </ul>
+                </td>
+          </tr>
           <tr>
-            <td>Empleado a cargo</td>
+            <td>Cocinero / Chef</td>
             <td>
-              El Empleado a cargo debe ser capaz de:
+              El cocinero debe ser capaz de:
               <ul>
-                <li>Registrar la asistencia diaria de su equipo: Entrada, salida y horas extras.</li>
-                <li>Actualizar información básica de los empleados a su cargo: Nombre, puesto, correo y teléfono.</li>
-                <li>Reportar incidencias o problemas relacionados con el personal a la administración.</li>
-                <li>Consultar horarios y turnos de los empleados a su cargo.</li>
-                <li>Visualizar reportes simples de asistencia y desempeño de su equipo.</li>
+                <li>Ver los pedidos pendientes de preparación.</li>
+                <li>Actualizar estado de platillos (Preparado, Servido).</li>
+                <li>Consultar historial de pedidos para control de calidad.</li>
               </ul>
             </td>
           </tr>
@@ -192,10 +201,9 @@
 
     <!-- Base de datos -->
     <section class="bd">
-      <h2>Diseño de la Base de Datos del modulo</h2>
-      <!--<img src="bd-personal.png" alt="Diagrama BD del módulo Personal">-->
+      <h2>Diseño de la Base de Datos</h2>
       <br>
-      <button onclick="location.href='../bdatos/BD_personal.html'">Base de Datos del modulo Personal</button>
+      <button onclick="location.href='../bdatos/BD_restaurante.html'">Ir al CRUD del Restaurante</button>
       <br>
       <button onclick="location.href='../index.html'">Regresar a la Interfaz Principal</button>
     </section>
@@ -206,7 +214,7 @@
       <p>Rosario Reyes Martinez</p>
       <p>230110050@itsoeh.edu.mx</p>
     </section>
-  </main>
 
+  </main>
 </body>
 </html>
