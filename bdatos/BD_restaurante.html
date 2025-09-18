@@ -107,95 +107,97 @@
     <section class="section-content">
       <h2>Diagrama de la Base de Datos</h2>
       <div class="bd">
-      <img src="bd-restaurante.png" alt="Diagrama BD Restaurante" style="max-width:90%;border:3px solid #800000;border-radius:10px;">
+      <img src="../imagenes/Restaurante_digr.png" alt="Diagrama BD Restaurante" style="max-width:90%;border:3px solid #800000;border-radius:10px;">
       </div>
     </section>
 
     <!-- Pertinencia de la arquitectura -->
     <section class="section-content">
-      <h2>Descripción de Pertinencia de la Arquitectura</h2>
+      <h2>Pertinencia de la Arquitectura de la Base de Datos</h2>
       <ul>
-        <li>Permite relacionar mesas, reservas, pedidos y platillos de forma eficiente.</li>
-        <li>Evita redundancia de información y facilita la generación de reportes de ventas.</li>
-        <li>Controla la relación entre meseros, cocineros y clientes.</li>
+        <li>Modelo relacional con integridad referencial entre mesas, menú y pedidos.</li>
+        <li>Escalable para integrar el restaurante con otros módulos (ejemplo: cargos a la cuenta de la habitación del huésped).</li>
+        <li>Permite consultas rápidas sobre disponibilidad de mesas, pedidos activos y consumo histórico.</li>
+    </ul>
       </ul>
     </section>
 
     <section>
-      <h2>Normalización (1NF, 2NF, 3NF)</h2>
+      <h2>Normalización de la Base de Datos</h2>
       <ul>
-        <li><strong>1NF:</strong> Todos los campos son atómicos y cada registro es único.</li>
-        <li><strong>2NF:</strong> Cada atributo depende completamente de la clave primaria.</li>
-        <li><strong>3NF:</strong> No existen dependencias transitivas; por ejemplo, la información de platillos depende solo del registro de platillo, no del pedido.</li>
-      </ul>
+        <li><strong>1FN:</strong> Todos los datos son atómicos (ejemplo: nombre_platillo, precio).</li>
+        <li><strong>2FN:</strong> Las tablas tienen claves primarias simples (id_mesa, id_menu, id_pedido).</li>
+        <li><strong>3FN:</strong> No existen dependencias transitivas (el subtotal depende solo de la cantidad y precio del platillo, no de otro atributo no clave).</li>
     </section>
 
     <section>
       <h2>Código SQL</h2>
       <pre>
--- Tabla Mesas
-CREATE TABLE Mesas (
-    idMesa INT PRIMARY KEY AUTO_INCREMENT,
-    numeroMesa VARCHAR(10) NOT NULL,
+-- Tabla de mesas
+CREATE TABLE Mesa (
+    id_mesa INT PRIMARY KEY IDENTITY(1,1),
+    numero_mesa INT UNIQUE NOT NULL,
     capacidad INT NOT NULL,
-    estado VARCHAR(20) -- Libre, Ocupada, Reservada
+    estado VARCHAR(20) NOT NULL CHECK (estado IN ('Disponible','Ocupada','Reservada'))
 );
 
--- Tabla Platillos
-CREATE TABLE Platillos (
-    idPlatillo INT PRIMARY KEY AUTO_INCREMENT,
-    nombre VARCHAR(100) NOT NULL,
-    categoria VARCHAR(50),
-    precio DECIMAL(10,2)
+-- Tabla de menú
+CREATE TABLE Menu (
+    id_menu INT PRIMARY KEY IDENTITY(1,1),
+    nombre_platillo VARCHAR(100) NOT NULL,
+    descripcion VARCHAR(200),
+    precio DECIMAL(10,2) NOT NULL,
+    tipo VARCHAR(30) NOT NULL CHECK (tipo IN ('Entrada','Plato Fuerte','Bebida','Postre'))
 );
 
--- Tabla Reservas
-CREATE TABLE ReservasRestaurante (
-    idReserva INT PRIMARY KEY AUTO_INCREMENT,
-    idMesa INT,
-    nombreCliente VARCHAR(100),
-    fecha DATE,
-    hora TIME,
-    FOREIGN KEY (idMesa) REFERENCES Mesas(idMesa)
+-- Tabla de pedidos
+CREATE TABLE Pedido (
+    id_pedido INT PRIMARY KEY IDENTITY(1,1),
+    id_mesa INT NOT NULL,
+    fecha_pedido DATETIME NOT NULL DEFAULT GETDATE(),
+    estado VARCHAR(20) NOT NULL CHECK (estado IN ('Pendiente','En Preparación','Servido','Pagado')),
+    FOREIGN KEY (id_mesa) REFERENCES Mesa(id_mesa)
 );
 
--- Tabla Pedidos a Habitación
-CREATE TABLE PedidosHabitacion (
-    idPedidoHabitacion INT PRIMARY KEY AUTO_INCREMENT,
-    numeroHabitacion VARCHAR(10) NOT NULL,
-    idMesero INT,
-    fecha DATE,
-    hora TIME,
-    estado VARCHAR(20), -- En preparación, Entregado
-    FOREIGN KEY (idMesero) REFERENCES Empleados(idEmpleado)
+-- Tabla detalle de pedido (relación muchos a muchos entre Pedido y Menu)
+CREATE TABLE Detalle_Pedido (
+    id_detalle INT PRIMARY KEY IDENTITY(1,1),
+    id_pedido INT NOT NULL,
+    id_menu INT NOT NULL,
+    cantidad INT NOT NULL CHECK (cantidad > 0),
+    subtotal DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (id_pedido) REFERENCES Pedido(id_pedido),
+    FOREIGN KEY (id_menu) REFERENCES Menu(id_menu)
 );
 
--- Tabla Detalle de Pedidos a Habitación
-CREATE TABLE DetallePedidosHabitacion (
-    idDetalle INT PRIMARY KEY AUTO_INCREMENT,
-    idPedidoHabitacion INT,
-    idPlatillo INT,
-    cantidad INT,
-    FOREIGN KEY (idPedidoHabitacion) REFERENCES PedidosHabitacion(idPedidoHabitacion),
-    FOREIGN KEY (idPlatillo) REFERENCES Platillos(idPlatillo)
-);
+      </pre>
+      <p>Insertando registros de ejemplo:</p>
+      <pre>
+-- Mesas
+INSERT INTO Mesa (numero_mesa, capacidad, estado) VALUES
+(1, 4, 'Disponible'),
+(2, 2, 'Disponible'),
+(3, 6, 'Ocupada'),
+(4, 4, 'Reservada');
 
--- Ejemplo de registros
-INSERT INTO PedidosHabitacion(numeroHabitacion, idMesero, fecha, hora, estado)
-VALUES ('101', 4, '2025-09-18', '13:00:00', 'En preparación');
+-- Menú
+INSERT INTO Menu (nombre_platillo, descripcion, precio, tipo) VALUES
+('Ensalada César', 'Ensalada fresca con pollo y aderezo césar', 120.00, 'Entrada'),
+('Filete de Res', 'Filete de res a la parrilla con guarnición', 250.00, 'Plato Fuerte'),
+('Sopa Azteca', 'Sopa tradicional mexicana con tortilla y aguacate', 90.00, 'Entrada'),
+('Agua de Horchata', 'Bebida fresca de arroz y canela', 45.00, 'Bebida'),
+('Pastel de Chocolate', 'Pastel casero con cobertura de chocolate', 80.00, 'Postre');
 
-INSERT INTO DetallePedidosHabitacion(idPedidoHabitacion, idPlatillo, cantidad)
-VALUES (1, 1, 1), (1, 2, 2);
+-- Pedido (Mesa 3 pidió alimentos)
+INSERT INTO Pedido (id_mesa, estado) VALUES
+(3, 'Pendiente');
 
+-- Detalle del Pedido
+INSERT INTO Detalle_Pedido (id_pedido, id_menu, cantidad, subtotal) VALUES
+(1, 2, 2, 500.00), -- 2 Filetes de res
+(1, 4, 2, 90.00),  -- 2 Aguas de horchata
+(1, 5, 1, 80.00);  -- 1 Pastel de chocolate
 
--- ==========================================
--- Ejemplo de registros
--- ==========================================
-INSERT INTO Mesas(numeroMesa, capacidad, estado) VALUES ('M01', 4, 'Libre'), ('M02', 2, 'Ocupada');
-INSERT INTO Platillos(nombre, categoria, precio) VALUES ('Pizza Margarita', 'Comida', 150.00), ('Ensalada César', 'Comida', 120.00);
-INSERT INTO Pedidos(idMesa, idMesero, fecha, hora, estado) VALUES (2, 4, '2025-09-18', '12:30:00', 'En preparación');
-INSERT INTO DetallePedidos(idPedido, idPlatillo, cantidad) VALUES (1, 1, 2), (1, 2, 1);
-INSERT INTO ReservasRestaurante(idMesa, nombreCliente, fecha, hora) VALUES (1, 'Carlos Díaz', '2025-09-18', '14:00:00');
       </pre>
     </section>
 
