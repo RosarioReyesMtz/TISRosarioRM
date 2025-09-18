@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Base de Datos - Módulo Personal</title>
+  <style>
+    :root {
+      --blanco: #ffffff;
+      --negro: #000000;
+      --guinda: #450505fe;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--blanco);
+      color: var(--negro);
+    }
+
+    header {
+      background: var(--guinda);
+      color: var(--blanco);
+      padding: 25px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.2rem;
+    }
+
+    header p {
+      font-size: 1.1rem;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 30px;
+    }
+
+    h2 {
+      color: var(--guinda);
+      border-left: 5px solid var(--guinda);
+      padding-left: 10px;
+      margin-top: 40px;
+    }
+
+    .section-content {
+      margin-top: 15px;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    ul li {
+      background: #f6f6f6;
+      padding: 10px;
+      margin-bottom: 8px;
+      border-left: 5px solid var(--guinda);
+    }
+
+    .bd img {
+      max-width: 90%;
+      border: 3px solid var(--guinda);
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    pre {
+      background: #f6f6f6;
+      border-left: 5px solid var(--guinda);
+      padding: 15px;
+      overflow-x: auto;
+      border-radius: 5px;
+    }
+
+    .buttons {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .buttons button {
+      background: var(--guinda);
+      color: var(--blanco);
+      padding: 12px 20px;
+      border: none;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    .buttons button:hover {
+      background: var(--negro);
+      color: var(--blanco);
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Base de Datos - Módulo Personal</h1>
+    <p>Diseño y creación de la base de datos del Hotel París</p>
+  </header>
+
+  <main>
+    <!-- Diagrama -->
+    <section class="section-content">
+      <h2>Diagrama de la Base de Datos</h2>
+      <p>El diagrama muestra las tablas principales necesarias para gestionar el personal del hotel: Empleados, Roles, Asistencia y Horarios.</p>
+      <div class="bd">
+        <img src="bd-personal.png" alt="Diagrama de la base de datos del módulo Personal">
+      </div>
+    </section>
+
+    <!-- Pertinencia de la arquitectura -->
+    <section class="section-content">
+      <h2>Descripción de Pertinencia de la Arquitectura de la Base de Datos</h2>
+      <p>Se eligió una arquitectura relacional porque permite:</p>
+      <ul>
+        <li>Organizar la información de los empleados de manera estructurada.</li>
+        <li>Establecer relaciones entre tablas, como Empleados ↔ Roles y Empleados ↔ Asistencia.</li>
+        <li>Facilitar consultas, reportes y mantenimiento de los datos.</li>
+        <li>Evitar redundancia y asegurar integridad de la información.</li>
+      </ul>
+    </section>
+
+    <!-- Normalización -->
+    <section class="section-content">
+      <h2>Normalización de la Base de Datos</h2>
+      <p>Se aplicaron las primeras tres formas normales para garantizar integridad y eficiencia:</p>
+      <ul>
+        <li><strong>1NF:</strong> Todos los campos contienen valores atómicos, no repetitivos y cada registro es único. Ej: La tabla Empleados tiene un campo “Nombre” indivisible.</li>
+        <li><strong>2NF:</strong> Todos los atributos dependen completamente de la clave primaria. Ej: Los datos de Roles no dependen parcialmente de la clave del empleado.</li>
+        <li><strong>3NF:</strong> No hay dependencia transitiva. Ej: Los salarios dependen del rol del empleado y no de otros datos no clave.</li>
+      </ul>
+    </section>
+
+    <!-- Código SQL -->
+    <section class="section-content">
+      <h2>Código SQL</h2>
+      <p>Creación de las tablas principales:</p>
+      <pre>
+-- Tabla Roles
+CREATE TABLE Roles (
+    idRol INT PRIMARY KEY AUTO_INCREMENT,
+    nombreRol VARCHAR(50) NOT NULL,
+    descripcionRol VARCHAR(200)
+);
+
+-- Tabla Empleados
+CREATE TABLE Empleados (
+    idEmpleado INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(100) NOT NULL,
+    puesto VARCHAR(50),
+    salario DECIMAL(10,2),
+    idRol INT,
+    correo VARCHAR(100),
+    telefono VARCHAR(20),
+    fechaIngreso DATE,
+    FOREIGN KEY (idRol) REFERENCES Roles(idRol)
+);
+
+-- Tabla Asistencia
+CREATE TABLE Asistencia (
+    idAsistencia INT PRIMARY KEY AUTO_INCREMENT,
+    idEmpleado INT,
+    fecha DATE NOT NULL,
+    horaEntrada TIME,
+    horaSalida TIME,
+    FOREIGN KEY (idEmpleado) REFERENCES Empleados(idEmpleado)
+);
+
+-- Tabla Horarios
+CREATE TABLE Horarios (
+    idHorario INT PRIMARY KEY AUTO_INCREMENT,
+    idEmpleado INT,
+    diaSemana VARCHAR(15),
+    horaInicio TIME,
+    horaFin TIME,
+    FOREIGN KEY (idEmpleado) REFERENCES Empleados(idEmpleado)
+);
+      </pre>
+
+      <p>Insertando registros de ejemplo:</p>
+      <pre>
+-- Insertar Roles
+INSERT INTO Roles(nombreRol, descripcionRol)
+VALUES ('Administrador', 'Encargado de la gestión completa del personal'),
+       ('Empleado a cargo', 'Supervisa asistencia y datos de su equipo');
+
+-- Insertar Empleados
+INSERT INTO Empleados(nombre, puesto, salario, idRol, correo, telefono, fechaIngreso)
+VALUES ('Juan Pérez', 'Gerente General', 25000, 1, 'juan.perez@hotelparis.com', '555-123456', '2025-01-15'),
+       ('María López', 'Supervisor de Piso', 15000, 2, 'maria.lopez@hotelparis.com', '555-654321', '2025-03-10');
+
+-- Insertar Asistencia
+INSERT INTO Asistencia(idEmpleado, fecha, horaEntrada, horaSalida)
+VALUES (1, '2025-09-18', '08:00:00', '17:00:00'),
+       (2, '2025-09-18', '09:00:00', '18:00:00');
+
+-- Insertar Horarios
+INSERT INTO Horarios(idEmpleado, diaSemana, horaInicio, horaFin)
+VALUES (1, 'Lunes', '08:00:00', '17:00:00'),
+       (2, 'Lunes', '09:00:00', '18:00:00');
+      </pre>
+    </section>
+
+    <div class="buttons">
+      <button onclick="location.href='../modulos/personal.html'">Regresar al Módulo Personal</button>
+      <button onclick="location.href='../index.html'">Regresar a la Interfaz Principal</button>
+    </div>
+
+  </main>
+
+</body>
+</html>
