@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema Integral - Hotel París</title>
+  <style>
+    :root {
+      --blanco: #ffffff;
+      --negro: #000000;
+      --guinda: #450505fe;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: var(--blanco);
+      color: var(--negro);
+    }
+
+    header {
+      background: var(--guinda);
+      color: var(--blanco);
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+    }
+
+    header p {
+      font-size: 1.2rem;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    section {
+      margin-bottom: 50px;
+    }
+
+    h2 {
+      color: var(--guinda);
+      border-left: 6px solid var(--guinda);
+      padding-left: 10px;
+    }
+
+    /* Botones de módulos */
+    .modulos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .modulos button {
+      background: var(--guinda);
+      color: var(--blanco);
+      padding: 15px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .modulos button:hover {
+      background: var(--negro);
+      color: var(--blanco);
+    }
+
+    /* Imagen del diagrama */
+    .diagrama {
+      text-align: center;
+    }
+
+    .diagrama img {
+      max-width: 90%;
+      border: 3px solid var(--guinda);
+      border-radius: 10px;
+    }
+
+    /* Miembros */
+    .miembros {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .miembro {
+      width: 220px;
+      background: var(--guinda);
+      color: var(--blanco);
+      border-radius: 10px;
+      text-align: center;
+      padding: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .miembro img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid var(--blanco);
+    }
+
+    .miembro h3 {
+      margin: 10px 0 5px;
+    }
+
+    .miembro p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Hotel París</h1>
+    <p>Sistema para la administración de servicios y procesos del Hotel París</p>
+  </header>
+
+  <main>
+    <!-- Problemática -->
+    <section>
+      <h2>Problemática</h2>
+      <p>El Hotel París administra sus áreas con procesos manuales o en sistemas aislados, lo que provoca pérdida de datos, poca coordinación entre departamentos y retrasos en el servicio. Es necesario contar con una solución unificada para mejorar la eficiencia y la atención al cliente.</p>
+    </section>
+
+    <!-- Objetivo -->
+    <section>
+      <h2>Objetivo</h2>
+      <p>Desarrollar un sistema integral que permita gestionar todos los procesos del Hotel París, facilitando el control de operaciones, optimizando recursos y brindando una mejor experiencia a huéspedes y empleados.</p>
+    </section>
+
+    <!-- Subsistemas -->
+    <section>
+      <h2>Modulos del Proyecto</h2>
+      <div class="modulos">
+        <button onclick="location.href='analisis.html'">Análisis de Ventas</button>
+        <button onclick="location.href='facturas.html'">Facturas</button>
+        <button onclick="location.href='seguridad.html'">Seguridad</button>
+        <button onclick="location.href='inventario.html'">Inventario</button>
+        <button onclick="location.href='restaurante.html'">Restaurante</button>
+        <button onclick="location.href='servicios.html'">Servicios</button>
+        <button onclick="location.href='estacionamiento.html'">Estacionamiento</button>
+        <button onclick="location.href='habitaciones.html'">Habitaciones</button>
+        <button onclick="location.href='membresia.html'">Membresía</button>
+        <button onclick="location.href='personal.html'">Personal</button>
+        <button onclick="location.href='promociones.html'">Promociones</button>
+        <button onclick="location.href='marketing.html'">Marketing</button>
+        <button onclick="location.href='reservacion.html'">Reservación</button>
+        <button onclick="location.href='venta.html'">Venta</button>
+        <button onclick="location.href='horario.html'">Horario</button>
+      </div>
+    </section>
+
+    <!-- Imagen del diagrama -->
+    <section class="diagrama">
+      <h2>Modulos del Sistema</h2>
+      <img src="imagenes/Hotel Paris.png" alt="Diagrama de Módulos del Hotel París">
+    </section>
+
+    <!-- Miembros -->
+    <section>
+      <h2>Miembros del Proyecto</h2>
+      <div class="miembros">
+        <div class="miembro">
+          <img src="foto1.jpg" alt="Miembro 1">
+          <h3>Carlos Granados Montoya</h3>
+          <p>230110073@itsoeh.edu.mx</p>
+        </div>
+        <div class="miembro">
+          <img src="foto2.jpg" alt="Miembro 2">
+          <h3>Rosario Reyes Martínez</h3>
+          <p>230110050@itsoeh.edu.mx</p>
+        </div>
+        <div class="miembro">
+          <img src="foto3.jpg" alt="Miembro 3">
+          <h3>Carmen Anahi Cornejo López </h3>
+          <p>230110084@itsoeh.edu.mx</p>
+        </div>
+        <div class="miembro">
+          <img src="foto3.jpg" alt="Miembro 3">
+          <h3>Gustavo Barrera Martínez</h3>
+          <p>230110063@itsoeh.edu.mx</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+</body>
+</html>
