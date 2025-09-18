@@ -106,29 +106,28 @@
     <!-- Diagrama -->
     <section>
       <h2>Diagrama de la Base de Datos</h2>
-      <p>El diagrama muestra las tablas principales: Espacios, Vehiculos, Reservas y RegistroEntradasSalidas.</p>
       <div class="bd">
-        <img src="bd-estacionamiento.png" alt="Diagrama BD del módulo Estacionamiento">
+        <img src="../imagenes/Estacionamiento_digr.png" alt="Diagrama BD del módulo Estacionamiento">
       </div>
     </section>
 
     <!-- Pertinencia -->
     <section>
-      <h2>Descripción de Pertinencia de la Arquitectura</h2>
+      <h2>Pertinencia de la Arquitectura de la Base de Datos</h2>
       <ul>
-        <li>La arquitectura relacional permite relacionar vehículos con espacios y reservas, así como registrar entradas y salidas de manera precisa.</li>
-        <li>Facilita consultas de disponibilidad y generación de reportes de uso y ocupación.</li>
-        <li>Evita redundancia y mantiene la integridad de la información.</li>
+        <li>El diseño relacional permite integrar el estacionamiento con huéspedes (en un futuro, relacionando Vehículo con la tabla de Clientes).</li>
+        <li>La arquitectura asegura integridad referencial (un vehículo solo puede estar en un espacio válido).</li>
+        <li>Escalabilidad: se pueden agregar más tipos de vehículos o ampliar los espacios fácilmente.</li>
       </ul>
     </section>
 
     <!-- Normalización -->
     <section>
-      <h2>Normalización (1NF, 2NF, 3NF)</h2>
+      <h2>Normalización de la Base de Datos</h2>
       <ul>
-        <li><strong>1NF:</strong> Todos los campos son atómicos y cada registro es único.</li>
-        <li><strong>2NF:</strong> Cada atributo depende completamente de la clave primaria.</li>
-        <li><strong>3NF:</strong> No existen dependencias transitivas. Por ejemplo, la información del vehículo depende de su registro, no de la reserva.</li>
+        <li><strong>1FN:</strong> Datos atómicos (placa, color, estado, etc.).</li>
+        <li><strong>2FN:</strong> Clave primaria simple (id_vehiculo, id_espacio).</li>
+        <li><strong>3FN:</strong> No hay dependencias transitivas (ejemplo: el estado del espacio depende solo de Espacio_Estacionamiento).</li>
       </ul>
     </section>
 
@@ -136,71 +135,46 @@
     <section>
       <h2>Código SQL</h2>
       <pre>
--- Tabla Espacios de Estacionamiento
-CREATE TABLE Espacios (
-    idEspacio INT PRIMARY KEY AUTO_INCREMENT,
-    numeroEspacio VARCHAR(10) NOT NULL,
-    estado VARCHAR(20), -- Disponible, Ocupado, Reservado
-    tipo VARCHAR(50) -- Normal, VIP, Discapacitados
+-- Tabla de espacios de estacionamiento
+CREATE TABLE Espacio_Estacionamiento (
+    id_espacio INT PRIMARY KEY IDENTITY(1,1),
+    numero_espacio INT UNIQUE NOT NULL,
+    estado VARCHAR(20) NOT NULL CHECK (estado IN ('Disponible','Ocupado','Reservado')),
+    tipo VARCHAR(20) NOT NULL CHECK (tipo IN ('Automóvil','Motocicleta','Camioneta'))
 );
 
--- Tabla Vehículos
-CREATE TABLE Vehiculos (
-    idVehiculo INT PRIMARY KEY AUTO_INCREMENT,
-    placa VARCHAR(20) NOT NULL,
-    marca VARCHAR(50),
+-- Tabla de vehículos
+CREATE TABLE Vehiculo (
+    id_vehiculo INT PRIMARY KEY IDENTITY(1,1),
+    placa VARCHAR(15) UNIQUE NOT NULL,
+    marca VARCHAR(50) NOT NULL,
     modelo VARCHAR(50),
-    color VARCHAR(20),
-    idEmpleado INT, -- opcional: empleado asociado
-    FOREIGN KEY (idEmpleado) REFERENCES Empleados(idEmpleado)
+    color VARCHAR(30),
+    id_espacio INT,
+    fecha_ingreso DATETIME NOT NULL,
+    fecha_salida DATETIME NULL,
+    FOREIGN KEY (id_espacio) REFERENCES Espacio_Estacionamiento(id_espacio)
 );
 
--- Tabla Reservas
-CREATE TABLE Reservas (
-    idReserva INT PRIMARY KEY AUTO_INCREMENT,
-    idVehiculo INT,
-    idEspacio INT,
-    fecha DATE NOT NULL,
-    horaInicio TIME,
-    horaFin TIME,
-    FOREIGN KEY (idVehiculo) REFERENCES Vehiculos(idVehiculo),
-    FOREIGN KEY (idEspacio) REFERENCES Espacios(idEspacio)
-);
+      </pre>
 
--- Tabla Registro de Entradas y Salidas
-CREATE TABLE RegistroEntradasSalidas (
-    idRegistro INT PRIMARY KEY AUTO_INCREMENT,
-    idVehiculo INT,
-    idEspacio INT,
-    fecha DATE NOT NULL,
-    horaEntrada TIME,
-    horaSalida TIME,
-    FOREIGN KEY (idVehiculo) REFERENCES Vehiculos(idVehiculo),
-    FOREIGN KEY (idEspacio) REFERENCES Espacios(idEspacio)
-);
+      <p>Insertando registros de ejemplo:</p>
+      <pre>
+-- Espacios de estacionamiento
+INSERT INTO Espacio_Estacionamiento (numero_espacio, estado, tipo) VALUES
+(1, 'Disponible', 'Automóvil'),
+(2, 'Disponible', 'Automóvil'),
+(3, 'Disponible', 'Motocicleta'),
+(4, 'Ocupado', 'Camioneta'),
+(5, 'Reservado', 'Automóvil');
 
--- ==========================================
--- Inserción de registros de ejemplo
--- ==========================================
+-- Vehículos registrados
+INSERT INTO Vehiculo (placa, marca, modelo, color, id_espacio, fecha_ingreso, fecha_salida) VALUES
+('ABC123', 'Toyota', 'Corolla', 'Blanco', 1, '2025-09-18 08:30:00', NULL),
+('XYZ789', 'Nissan', 'Versa', 'Negro', 2, '2025-09-18 09:00:00', NULL),
+('MOTO22', 'Honda', 'CBR', 'Rojo', 3, '2025-09-18 10:15:00', NULL),
+('TRK555', 'Ford', 'Ranger', 'Azul', 4, '2025-09-18 07:45:00', '2025-09-18 12:00:00');
 
--- Insertar Espacios
-INSERT INTO Espacios(numeroEspacio, estado, tipo)
-VALUES ('E01', 'Disponible', 'Normal'),
-       ('E02', 'Ocupado', 'VIP'),
-       ('E03', 'Disponible', 'Discapacitados');
-
--- Insertar Vehículos
-INSERT INTO Vehiculos(placa, marca, modelo, color)
-VALUES ('ABC123', 'Toyota', 'Corolla', 'Blanco'),
-       ('XYZ789', 'Honda', 'Civic', 'Negro');
-
--- Insertar Reservas
-INSERT INTO Reservas(idVehiculo, idEspacio, fecha, horaInicio, horaFin)
-VALUES (1, 1, '2025-09-18', '08:00:00', '12:00:00');
-
--- Insertar Registro Entradas/Salidas
-INSERT INTO RegistroEntradasSalidas(idVehiculo, idEspacio, fecha, horaEntrada, horaSalida)
-VALUES (2, 2, '2025-09-18', '09:00:00', '11:00:00');
       </pre>
     </section>
 

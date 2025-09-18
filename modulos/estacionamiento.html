@@ -136,15 +136,18 @@
     <!-- Descripción -->
     <section>
       <h2>Descripción</h2>
-      <p>El módulo de Estacionamiento permite administrar los espacios disponibles, registrar entradas y salidas de vehículos, gestionar reservas de estacionamiento y generar reportes de ocupación y uso. Facilita la organización y control del área de estacionamiento del hotel.</p>
+      <p>El Módulo de Estacionamiento administra los espacios de estacionamiento del Hotel París
+         y los vehículos que ingresan. Controla la asignación de espacios, registra entradas y salidas
+          de autos y permite gestionar el estado de cada lugar (disponible, ocupado, reservado).</p>
     </section>
 
     <!-- Usuarios -->
     <section class="usuarios">
       <h2>Usuarios que utilizarán este módulo</h2>
       <ul>
-        <li>Administrador de Estacionamiento</li>
-        <li>Personal de Recepción / Valet Parking</li>
+        <li><span class="role">Encargado de Seguridad:</span> Controla accesos de vehículos.</li>
+        <li><span class="role">Recepcionista:</span> Registra entrada y salida de huéspedes con vehículos.</li>
+        <li><span class="role">Administrador del Hotel:</span> Supervisa uso de estacionamiento y reportes.</li>
       </ul>
     </section>
 
@@ -160,26 +163,30 @@
         </thead>
         <tbody>
           <tr>
-            <td>Administrador de Estacionamiento</td>
+            <td>Encargado de Seguridad</td>
             <td>
-              El Administrador debe ser capaz de:
               <ul>
-                <li>Agregar, editar y eliminar espacios de estacionamiento.</li>
-                <li>Asignar vehículos a espacios específicos y registrar reservas.</li>
-                <li>Consultar el estado de ocupación en tiempo real.</li>
-                <li>Generar reportes de uso, ingresos y ocupación por día o mes.</li>
+                <li>Registrar vehículos que ingresan.</li>
+                <li>Asignar espacio de estacionamiento disponible.</li>
+                <li>Liberar espacio al momento de salida.</li>
               </ul>
             </td>
           </tr>
           <tr>
-            <td>Personal de Recepción / Valet Parking</td>
+            <td>Recepcionista</td>
             <td>
-              El personal debe ser capaz de:
               <ul>
-                <li>Registrar entradas y salidas de vehículos.</li>
-                <li>Asignar espacios de estacionamiento a vehículos en tiempo real.</li>
-                <li>Consultar disponibilidad de espacios.</li>
-                <li>Actualizar información de reservas y vehículos.</li>
+                <li>Asociar vehículo al huésped.</li>
+                <li>Consultar estado de espacios (disponibles/ocupados).</li>>
+              </ul>
+            </td>
+          </tr>
+          <tr>
+            <td>Administrador del Hotel</td>
+            <td>
+              <ul>
+                <li>Generar reportes de ocupación.</li>
+                <li>Revisar historial de ingresos y salidas.</li>
               </ul>
             </td>
           </tr>
